@@ -23,11 +23,35 @@ jobs:
         env:
           SITE_URL: ${{ vars.SITE_URL }}
 
+      # The built site, downloadable from the run page (handy for a manual upload).
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site-dist
+          path: dist
+          include-hidden-files: true
+          if-no-files-found: error
+
+      - name: Check FTP settings
+        id: ftp
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          if [ -z "$FTP_SERVER" ] || [ -z "$FTP_USERNAME" ] || [ -z "$FTP_PASSWORD" ]; then
+            echo "::warning::FTP secrets are missing, so the upload was skipped. Add FTP_SERVER, FTP_USERNAME and FTP_PASSWORD under Settings > Secrets and variables > Actions."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Upload to Hostinger over FTP
+        if: steps.ftp.outputs.ready == 'true'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftp' }}
           local-dir: ./dist/
           server-dir: ${{ vars.FTP_DIR || '/public_html/' }}

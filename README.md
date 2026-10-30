@@ -41,7 +41,10 @@ npm run preview    # معاينة نسخة البناء
 3. في GitHub: **Settings ← Secrets and variables ← Actions**:
    - Secrets: `FTP_SERVER` و`FTP_USERNAME` و`FTP_PASSWORD`.
    - Variables: `SITE_URL` (مثل `https://example.com`) و`FTP_DIR` (اختياري، الافتراضي `/public_html/`).
+   - `FTP_DIR`: مجلد الموقع على هوستنجر. إن كان حساب FTP الذي أنشأته مقيّداً داخل `public_html` أصلاً فاجعله `/`.
+   - `FTP_PROTOCOL` (اختياري): `ftp` (الافتراضي) أو `ftps` إذا كان خادمك يدعم التشفير.
 4. أي `push` جديد على `main` ينشر الموقع تلقائياً. يمكنك أيضاً تشغيله يدوياً من تبويب **Actions**.
+   إن لم تُضف الأسرار بعد، يبني التشغيل الموقع فقط ويظهر تحذير يوضح ما ينقص، وتجد نسخة البناء جاهزة للتنزيل باسم `site-dist` في صفحة التشغيل.
 
 ## ملاحظات
 
